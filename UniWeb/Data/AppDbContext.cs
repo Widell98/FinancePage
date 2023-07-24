@@ -12,5 +12,6 @@ namespace UniWeb.Data
                    
         }
         public DbSet<Customer> Customer { get; set; }
+        public DbSet<Stock> Stocks { get; set; }
     }
 }

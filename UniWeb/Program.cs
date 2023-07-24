@@ -10,8 +10,9 @@ var connectionString = builder.Configuration.GetConnectionString("Default");
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddTransient<CustomerService>();
+builder.Services.AddTransient<StockServices>();
+
 
 builder.Services.AddDbContextFactory<AppDbContext>((DbContextOptionsBuilder options) =>
 options.UseSqlServer(connectionString));

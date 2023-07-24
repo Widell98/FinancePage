@@ -1,0 +1,60 @@
+﻿@page "/Finance"
+@using System.Net.Http
+@using System.Text.Json
+
+<h3>Finance</h3>
+<p>Portfolio builder</p>
+
+<div>
+    <form @onsubmit="HandleSubmit">
+        <label for="StockSymbol">Stock Symbol</label>
+        <input id="StockSymbol" @bind="@stockSymbol" />
+        <button type="submit">Search</button>
+    </form>
+    @if (!string.IsNullOrEmpty(apiResult))
+    {
+        <p>API Result (longBusinessSummary):</p>
+        <pre>@longBusinessSummary</pre>
+    }
+</div>
+
+@code {
+    private string stockSymbol = "";
+    private string apiResult = null;
+    private string longBusinessSummary = null;
+    private readonly HttpClient client = new HttpClient();
+
+    private async Task HandleSubmit()
+    {
+        var requestUri = $"https://yahoo-finance15.p.rapidapi.com/api/yahoo/qu/quote/{stockSymbol}/asset-profile";
+
+        var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(requestUri),
+            };
+        request.Headers.Add("X-RapidAPI-Key", "c4847df697msh31a55302ed091fcp1d1c66jsnc6f6f2254b77");
+        request.Headers.Add("X-RapidAPI-Host", "yahoo-finance15.p.rapidapi.com");
+
+        using (var response = await client.SendAsync(request))
+        {
+            response.EnsureSuccessStatusCode();
+            var body = await response.Content.ReadAsStringAsync();
+
+            // Parsa JSON-svaret
+            var jsonDocument = JsonDocument.Parse(body);
+
+            // Extrahera "longBusinessSummary"
+            if (jsonDocument.RootElement.TryGetProperty("assetProfile", out var assetProfile))
+            {
+                if (assetProfile.TryGetProperty("longBusinessSummary", out var longBusinessSummaryElement))
+                {
+                    longBusinessSummary = longBusinessSummaryElement.GetString();
+                }
+            }
+
+            // Spara hela API-svaret om du behöver det för andra ändamål
+            apiResult = body;
+        }
+    }
+}

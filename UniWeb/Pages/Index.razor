@@ -1,7 +1,6 @@
 ﻿@page "/"
 @using UniWeb.Data.Models;
 @using UniWeb.Services;
-@inject CustomerService customerService
 
 <PageTitle>Index</PageTitle>
 
@@ -9,29 +8,8 @@
 
 Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" />
-
-<EditForm Model="@customer" OnValidSubmit="HandleSubmit">
-    <label for="NameInput">Name</label>
-    <InputText id="NameInput" @bind-Value="@customer.Name"></InputText>
-    <label for="AgeInput"></label>
-    <InputNumber id="AgeInput" @bind-Value="customer.Age"></InputNumber>
-    <button type="submit" class="btn-primary">Create</button>
-</EditForm> 
-
-<div> 
-    <h1> @customer.Name</h1>
-</div>
 
 
 @code {
-    Customer customer = new Customer();
 
-
-    public void HandleSubmit(EditContext editContext)
-    {
-        var newCustomer = (Customer)editContext.Model;
-        newCustomer.CreatedDate = DateTime.Now;
-        customerService.AddCustomer(newCustomer);
-    }
 }
