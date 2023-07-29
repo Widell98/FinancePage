@@ -169,7 +169,6 @@
     private void DeleteStock(int stockId)
     {
         stockServices.DeleteStock(stockId);
-        // Refresh the stock list after deletion
         allStocks = stockServices.GetAllStocks();
     }
 
