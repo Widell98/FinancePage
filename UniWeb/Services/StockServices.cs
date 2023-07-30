@@ -6,6 +6,8 @@ using UniWeb.Data.Models;
 
 namespace UniWeb.Services
 {
+    [ApiController]
+    [Route ("api/[controller]")]
     public class StockServices
     {
 
@@ -49,6 +51,22 @@ namespace UniWeb.Services
                 if (stockToDelete != null)
                 {
                     context.Stocks.Remove(stockToDelete);
+                    context.SaveChanges();
+                }
+            }
+        }
+        public void EditStock(int stockId, Stock editedStock)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                var existingStock = context.Stocks.FirstOrDefault(s => s.Id == stockId);
+
+                if (existingStock != null)
+                {
+                   
+                    existingStock.Name = editedStock.Name;
+                    existingStock.Description = editedStock.Description;
+
                     context.SaveChanges();
                 }
             }

@@ -31,9 +31,9 @@
             {
                 <div class="alert alert-success mt-2">Stock added successfully!</div>
             }
-            <br/>
+            <br />
         </div>
-       
+
         <div class="col-md-6">
             <div class="search-form">
                 <h3>Search for Stocks</h3>
@@ -53,13 +53,46 @@
             </div>
         </div>
 
+        <div class="modal" tabindex="-1" role="dialog" style="@modalStyle">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Stock</h5>
+                        <button type="button" class="close" @onclick="CloseEditModal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form @onsubmit="HandleEditSubmit">
+                            <div class="form-group">
+                                <label for="EditStockId">Stock ID</label>
+                                <InputNumber id="EditStockId" @bind-Value="@editStock.Id"></InputNumber>
+                            </div>
+                            <div class="form-group">
+                                <label for="EditStockName">Name</label>
+                                <InputText id="EditStockName" @bind-Value="@editStock.Name"></InputText>
+                            </div>
+                            <div class="form-group">
+                                <label for="EditStockDescription">Description</label>
+                                <InputText id="EditStockDescription" @bind-Value="@editStock.Description"></InputText>
+                            </div>
+
+                            <!-- Add more fields for other properties that can be edited -->
+
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="container mt-5">
             <!-- ... Your existing content ... -->
             <div class="row mt-5">
                 <div class="col-md-12">
                     <div class="stock-list">
                         <h3>Stocks in Database</h3>
-                     
+
                         @if (allStocks.Any())
                         {
                             <ul class="list-group">
@@ -70,11 +103,13 @@
                                         @if (!string.IsNullOrEmpty(stock.Name))
                                         {
                                             <span class="portfolio-text">@stock.Name</span>
-                                       
                                         }
                                         <button class="btn btn-danger btn-sm" @onclick="() => DeleteStock(stock.Id)">Delete</button>
+
+                                        <!-- Knapp för att redigera aktien -->
+                                        <button class="btn btn-primary btn-sm ml-2" @onclick="() => OpenEditModal(stock)">Edit</button>
                                     </li>
-                                    <hr /> 
+                                    <hr />
                                 }
                             </ul>
                         }
@@ -116,24 +151,24 @@
 
 
 
-        /* ... Your existing styles ... */
+    /* ... Your existing styles ... */
 
-        /* Add custom styles for the list items */
-        .stock-list .list-group-item {
-            border: none;
-            padding: 0;
-            margin-bottom: 10px;
-            background-color: transparent;
+    /* Add custom styles for the list items */
+    .stock-list .list-group-item {
+        border: none;
+        padding: 0;
+        margin-bottom: 10px;
+        background-color: transparent;
+    }
+
+        .stock-list .list-group-item:last-child {
+            margin-bottom: 0;
         }
 
-            .stock-list .list-group-item:last-child {
-                margin-bottom: 0;
-            }
-
-        /* Style the line between list items */
-        .stock-list hr {
-            border-top: px solid #ccc;
-        }
+    /* Style the line between list items */
+    .stock-list hr {
+        border-top: px solid #ccc;
+    }
 </style>
 
 @code {
@@ -141,6 +176,9 @@
     private string apiResult = null;
     private string longBusinessSummary = null;
     private readonly HttpClient client = new HttpClient();
+    private string modalStyle = "display: none;";
+    private int editStockId;
+    private Stock editStock = new Stock();
 
     private Stock stock = new Stock();
     private bool showSuccessMessage = false;
@@ -165,6 +203,31 @@
             stock = new Stock();
         }
     }
+
+     private void OpenEditModal(Stock stock)
+    {
+        editStock = new Stock
+        {
+            Id = stock.Id,
+            Name = stock.Name,
+            Description = stock.Description
+            // Lägg till fler egenskaper om det behövs för redigering
+        };
+    }
+    private void HandleEditSubmit()
+    {
+        stockServices.EditStock(editStock.Id, editStock);
+        // Återställ formuläret efter inlämning
+        CloseEditModal();
+        // Uppdatera listan med aktier
+        allStocks = stockServices.GetAllStocks();
+    }
+    private void CloseEditModal()
+    {
+        modalStyle = "display: none;";
+        editStock = new Stock();
+    }
+
 
     private void DeleteStock(int stockId)
     {
