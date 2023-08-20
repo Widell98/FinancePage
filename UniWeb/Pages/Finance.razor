@@ -6,10 +6,42 @@
 @inject StockServices stockServices
 
 <div class="container mt-5">
+    <div class="container mt-5">
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <div class="stock-list">
+                    <h3 class="investing-title">Portfolio</h3>
+                    @if (allStocks.Any())
+                    {
+                        <ul class="list-group">
+                            @foreach (var stock in allStocks)
+                            {
+                                <li class="list-group-item">
+                                    <strong>@stock.Name</strong>
+                                    <span class="description">@stock.Description</span>
+
+                                    <div>
+                                        <button class="btn btn-primary btn-sm" @onclick="() => OpenEditModal(stock)">Edit</button>
+                                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteStock(stock.Id)">Delete</button>
+                                    </div>
+                                </li>
+                                <hr />
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p>No stocks in the database.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div class="row">
         <div class="col-md-6">
-            <h3>Finance - Portfolio Builder</h3>
+            <h3>Portfolio Builder</h3>
             <EditForm Model="@stock" OnValidSubmit="HandleStockSubmit">
                 <div class="form-group">
                     <label for="NameInput">Stock Name</label>
@@ -44,16 +76,16 @@
                     </div>
                     <button type="submit" class="btn btn-primary">Search</button>
                 </form>
-
                 @if (!string.IsNullOrEmpty(apiResult))
                 {
-                    <p class="api-result-title">API Result (longBusinessSummary):</p>
+                    <p class="api-result-title">Summary:</p>
                     <pre class="api-result">@longBusinessSummary</pre>
                 }
             </div>
         </div>
+      
 
-        <div class="modal" tabindex="-1" role="dialog" style="@modalStyle">
+        <div class="modal" tabindex="-1" role="dialog" style="@($"display: {(EditModalOpen ? "block" : "none")};" )">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -65,10 +97,6 @@
                     <div class="modal-body">
                         <form @onsubmit="HandleEditSubmit">
                             <div class="form-group">
-                                <label for="EditStockId">Stock ID</label>
-                                <InputNumber id="EditStockId" @bind-Value="@editStock.Id"></InputNumber>
-                            </div>
-                            <div class="form-group">
                                 <label for="EditStockName">Name</label>
                                 <InputText id="EditStockName" @bind-Value="@editStock.Name"></InputText>
                             </div>
@@ -76,55 +104,40 @@
                                 <label for="EditStockDescription">Description</label>
                                 <InputText id="EditStockDescription" @bind-Value="@editStock.Description"></InputText>
                             </div>
-
-                            <!-- Add more fields for other properties that can be edited -->
+                        
 
                             <button type="submit" class="btn btn-primary">Save Changes</button>
                         </form>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="container mt-5">
-            <!-- ... Your existing content ... -->
-            <div class="row mt-5">
-                <div class="col-md-12">
-                    <div class="stock-list">
-                        <h3>Stocks in Database</h3>
-
-                        @if (allStocks.Any())
-                        {
-                            <ul class="list-group">
-                                @foreach (var stock in allStocks)
-                                {
-                                    <li class="list-group-item">
-                                        <strong>@stock.Name</strong> - @stock.Description
-                                        @if (!string.IsNullOrEmpty(stock.Name))
-                                        {
-                                            <span class="portfolio-text">@stock.Name</span>
-                                        }
-                                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteStock(stock.Id)">Delete</button>
-
-                                        <!-- Knapp för att redigera aktien -->
-                                        <button class="btn btn-primary btn-sm ml-2" @onclick="() => OpenEditModal(stock)">Edit</button>
-                                    </li>
-                                    <hr />
-                                }
-                            </ul>
-                        }
-                        else
-                        {
-                            <p>No stocks in the database.</p>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
+        </div>       
     </div>
 </div>
 
 <style>
+    .stock-list .list-group-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: none;
+        padding: 0;
+        margin-bottom: 10px;
+        background-color: transparent;
+    }
+
+        .stock-list .list-group-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .stock-list .list-group-item .description {
+            flex: 1;
+            text-align: center;
+        }
+
+        .stock-list .list-group-item button {
+            margin-left: 5px;
+        }
 
     .container {
         max-width: 800px;
@@ -169,6 +182,10 @@
     .stock-list hr {
         border-top: px solid #ccc;
     }
+
+    .investing-title{
+        margin-bottom: 20px;
+    }
 </style>
 
 @code {
@@ -179,6 +196,7 @@
     private string modalStyle = "display: none;";
     private int editStockId;
     private Stock editStock = new Stock();
+    private bool EditModalOpen = false;
 
     private Stock stock = new Stock();
     private bool showSuccessMessage = false;
@@ -204,7 +222,7 @@
         }
     }
 
-     private void OpenEditModal(Stock stock)
+    private void OpenEditModal(Stock stock)
     {
         editStock = new Stock
         {
@@ -213,6 +231,7 @@
             Description = stock.Description
             // Lägg till fler egenskaper om det behövs för redigering
         };
+        EditModalOpen = true;
     }
     private void HandleEditSubmit()
     {
@@ -224,7 +243,7 @@
     }
     private void CloseEditModal()
     {
-        modalStyle = "display: none;";
+        EditModalOpen = false;
         editStock = new Stock();
     }
 

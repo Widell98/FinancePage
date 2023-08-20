@@ -1,0 +1,83 @@
+﻿
+@page "/WebScraping"
+@using System.Net.Http
+@using HtmlAgilityPack
+@using Microsoft.AspNetCore.Components.Web
+
+<h3>WebScraping</h3>
+
+<div class="container">
+    <button @onclick="ScrapeAndDisplayDivs">(sälj) från Placera Telegram</button>
+</div>
+
+<div class="result-container">
+    @if (foundDivs.Count > 0)
+    {
+        <h4>Nyheter</h4>
+        @foreach (var divContent in foundDivs)
+        {
+            <div class="result-div">
+                @((MarkupString)divContent)
+            </div>
+        }
+    }
+    else if (scrapingCompleted)
+    {
+        <p>Inga (sälj) hittades</p>
+    }
+</div>
+
+<style>
+    .container {
+        margin-bottom: 20px;
+    }
+
+    .result-container {
+        max-height: 400px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 10px;
+    }
+
+    .result-div {
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin: 10px 0;
+        background-color: #f9f9f9;
+    }
+</style>
+
+@code {
+    private List<string> foundDivs = new List<string>();
+    private bool scrapingCompleted = false;
+    private string targetUrl = "https://www.placera.se/placera/telegram.200.html";
+    private string searchKeyword = "(Sälj)"; // Hårdkodat sökord
+
+    private async Task ScrapeAndDisplayDivs()
+    {
+        foundDivs.Clear();
+        scrapingCompleted = false;
+
+        var httpClient = new HttpClient();
+        var html = await httpClient.GetStringAsync(targetUrl);
+
+        var htmlDocument = new HtmlDocument();
+        htmlDocument.LoadHtml(html);
+
+        var introDivNodes = htmlDocument.DocumentNode.SelectNodes("//div[contains(@class, 'intro lhNormal')]");
+        if (introDivNodes != null)
+        {
+            foreach (var introDivNode in introDivNodes)
+            {
+                var divContent = introDivNode.InnerHtml.Trim();
+                if (divContent.Contains(searchKeyword, StringComparison.OrdinalIgnoreCase))
+                {
+                    foundDivs.Add(divContent);
+                }
+            }
+        }
+
+        scrapingCompleted = true;
+    }
+}
+
