@@ -52,6 +52,10 @@
                     <label for="Description">Description</label>
                     <InputText class="form-control" id="Description" @bind-Value="stock.Description"></InputText>
                 </div>
+                <div class="form-group">
+                    <label for="ImageInput">Stock Image</label>
+                    <InputFile class="form-control-file" id="ImageInput" OnChange="HandleFileChange" />
+                </div>
                 <button type="submit" class="btn btn-primary">Add Stock</button>
             </EditForm>
 
@@ -83,7 +87,7 @@
                 }
             </div>
         </div>
-      
+
 
         <div class="modal" tabindex="-1" role="dialog" style="@($"display: {(EditModalOpen ? "block" : "none")};" )">
             <div class="modal-dialog" role="document">
@@ -104,14 +108,14 @@
                                 <label for="EditStockDescription">Description</label>
                                 <InputText id="EditStockDescription" @bind-Value="@editStock.Description"></InputText>
                             </div>
-                        
+
 
                             <button type="submit" class="btn btn-primary">Save Changes</button>
                         </form>
                     </div>
                 </div>
             </div>
-        </div>       
+        </div>
     </div>
 </div>
 
@@ -183,7 +187,7 @@
         border-top: px solid #ccc;
     }
 
-    .investing-title{
+    .investing-title {
         margin-bottom: 20px;
     }
 </style>
@@ -197,10 +201,39 @@
     private int editStockId;
     private Stock editStock = new Stock();
     private bool EditModalOpen = false;
+    private byte[]? uploadedImageData;
+    private string? uploadedImageMimeType;
 
     private Stock stock = new Stock();
     private bool showSuccessMessage = false;
     private bool showFailMessage = false;
+
+    //private async Task HandleStockSubmit()
+    //{
+    //    bool isStockExist = stockServices.IsStockExists(stock.Name);
+
+    //    if (isStockExist)
+    //    {
+    //        // Aktien finns redan, visa felmeddelande
+    //        showFailMessage = true;
+    //    }
+    //    else
+    //    {
+    //        // Aktien finns inte, lägg till i databasen
+    //        // Uppdatera stock med bildinformation innan du lägger till
+    //        stock.ImageData = uploadedImageData; // Använd den uppladdade bildens data
+    //        stock.ImageType = uploadedImageMimeType; // Använd den uppladdade bildens MIME-typ
+    //        stockServices.AddStock(stock);
+
+    //        showFailMessage = false;
+    //        showSuccessMessage = true;
+
+    //        stock = new Stock();
+    //        // Återställ bildinformation för nästa formulär
+    //        uploadedImageData = null;
+    //        uploadedImageMimeType = null;
+    //    }
+    //}
 
     private async Task HandleStockSubmit()
     {
@@ -222,15 +255,16 @@
         }
     }
 
+
     private void OpenEditModal(Stock stock)
     {
         editStock = new Stock
-        {
-            Id = stock.Id,
-            Name = stock.Name,
-            Description = stock.Description
-            // Lägg till fler egenskaper om det behövs för redigering
-        };
+            {
+                Id = stock.Id,
+                Name = stock.Name,
+                Description = stock.Description
+                // Lägg till fler egenskaper om det behövs för redigering
+            };
         EditModalOpen = true;
     }
     private void HandleEditSubmit()
@@ -241,6 +275,25 @@
         // Uppdatera listan med aktier
         allStocks = stockServices.GetAllStocks();
     }
+
+    private async Task HandleFileChange(InputFileChangeEventArgs e)
+    {
+        // Hantera filändringen här
+        // e.File kommer att innehålla information om den uppladdade filen
+        // Konvertera den till byte-array och lagra i din modell (stock)
+        using (var stream = e.File.OpenReadStream())
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                await stream.CopyToAsync(memoryStream);
+                stock.ImageData = memoryStream.ToArray();
+            }
+        }
+
+        // Sätt MIME-typen baserat på filändelse (kan vara mer robust i produktion)
+        stock.ImageType = e.File.ContentType;
+    }
+
     private void CloseEditModal()
     {
         EditModalOpen = false;

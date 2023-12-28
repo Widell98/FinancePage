@@ -1,16 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
+﻿using Microsoft.EntityFrameworkCore;
 using UniWeb.Data;
 using UniWeb.Data.Models;
 
 namespace UniWeb.Services
 {
-    [ApiController]
-    [Route ("api/[controller]")]
     public class StockServices
     {
-
         private IDbContextFactory<AppDbContext> _dbContextFactory;
 
         public StockServices(IDbContextFactory<AppDbContext> dbContextFactory)
@@ -63,14 +58,21 @@ namespace UniWeb.Services
 
                 if (existingStock != null)
                 {
-                   
-                    existingStock.Name = editedStock.Name;
-                    existingStock.Description = editedStock.Description;
+                    // Kontrollera om editedStock.Name är inte null innan du uppdaterar
+                    if (editedStock.Name != null)
+                    {
+                        existingStock.Name = editedStock.Name;
+                    }
+
+                    // Kontrollera om editedStock.Description är inte null innan du uppdaterar
+                    if (editedStock.Description != null)
+                    {
+                        existingStock.Description = editedStock.Description;
+                    }
 
                     context.SaveChanges();
                 }
             }
         }
-
     }
 }

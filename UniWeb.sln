@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniWeb", "UniWeb\UniWeb.csproj", "{EAF9C031-D9F7-4CF1-8A79-837A54940D0C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniWebServer", "UniWebServer\UniWebServer.csproj", "{26B298F9-7010-4E44-86C4-6FF081C6732B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{EAF9C031-D9F7-4CF1-8A79-837A54940D0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAF9C031-D9F7-4CF1-8A79-837A54940D0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAF9C031-D9F7-4CF1-8A79-837A54940D0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26B298F9-7010-4E44-86C4-6FF081C6732B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26B298F9-7010-4E44-86C4-6FF081C6732B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26B298F9-7010-4E44-86C4-6FF081C6732B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26B298F9-7010-4E44-86C4-6FF081C6732B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

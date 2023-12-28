@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 using UniWeb.Data.Models;
 
 namespace UniWeb.Data
@@ -11,7 +10,6 @@ namespace UniWeb.Data
         { 
                    
         }
-        public DbSet<Customer> Customer { get; set; }
         public DbSet<Stock> Stocks { get; set; }
     }
 }
