@@ -38,6 +38,15 @@ namespace UniWeb.Services
             }
         }
 
+        public Stock GetStockById(int stockId)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                return context.Stocks.FirstOrDefault(s => s.Id == stockId);
+            }
+        }
+
+
         public void DeleteStock(int stockId)
         {
             using (var context = _dbContextFactory.CreateDbContext())

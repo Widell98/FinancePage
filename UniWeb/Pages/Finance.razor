@@ -208,33 +208,6 @@
     private bool showSuccessMessage = false;
     private bool showFailMessage = false;
 
-    //private async Task HandleStockSubmit()
-    //{
-    //    bool isStockExist = stockServices.IsStockExists(stock.Name);
-
-    //    if (isStockExist)
-    //    {
-    //        // Aktien finns redan, visa felmeddelande
-    //        showFailMessage = true;
-    //    }
-    //    else
-    //    {
-    //        // Aktien finns inte, lägg till i databasen
-    //        // Uppdatera stock med bildinformation innan du lägger till
-    //        stock.ImageData = uploadedImageData; // Använd den uppladdade bildens data
-    //        stock.ImageType = uploadedImageMimeType; // Använd den uppladdade bildens MIME-typ
-    //        stockServices.AddStock(stock);
-
-    //        showFailMessage = false;
-    //        showSuccessMessage = true;
-
-    //        stock = new Stock();
-    //        // Återställ bildinformation för nästa formulär
-    //        uploadedImageData = null;
-    //        uploadedImageMimeType = null;
-    //    }
-    //}
-
     private async Task HandleStockSubmit()
     {
         bool isStockExist = stockServices.IsStockExists(stock.Name);
