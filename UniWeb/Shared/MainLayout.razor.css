@@ -1,19 +1,22 @@
+/* Page layout styling */
 .page {
-    position: relative;
     display: flex;
     flex-direction: column;
 }
 
+/* Main content styling */
 main {
     flex: 1;
 }
 
+/* Sidebar styling */
 .sidebar {
-    background-color: black;
+    background-color: white;
 }
 
+/* Top row styling */
 .top-row {
-    background-color: black;
+    background-color: white;
     border-bottom: 1px solid #d6d5d5;
     justify-content: flex-end;
     height: 3.5rem;
@@ -21,16 +24,20 @@ main {
     align-items: center;
 }
 
-    .top-row ::deep a, .top-row .btn-link {
+    /* Top row link and button styling */
+    .top-row a,
+    .top-row .btn-link {
         white-space: nowrap;
         margin-left: 1.5rem;
     }
 
-    .top-row a:first-child {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+        /* Ellipsis overflow for first child link */
+        .top-row a:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
+/* Media query for small screens */
 @media (max-width: 640.98px) {
     .top-row:not(.auth) {
         display: none;
@@ -40,11 +47,13 @@ main {
         justify-content: space-between;
     }
 
-    .top-row a, .top-row .btn-link {
+    .top-row a,
+    .top-row .btn-link {
         margin-left: 0;
     }
 }
 
+/* Media query for large screens */
 @media (min-width: 641px) {
     .page {
         flex-direction: row;
@@ -63,7 +72,8 @@ main {
         z-index: 1;
     }
 
-    .top-row, article {
+    .top-row,
+    article {
         padding-left: 2rem !important;
         padding-right: 1.5rem !important;
     }

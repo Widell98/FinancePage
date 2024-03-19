@@ -10,9 +10,9 @@
     <div class="row mt-5">
         <div class="col-md-12">
             <div class="stock-list">
-                @if (allStocks.Any())
+                @if (currentStocks.Any())
                 {
-                    @foreach (var stock in allStocks)
+                    @foreach (var stock in currentStocks)
                     {
                         <div class="stock-card" @onclick="() => ShowStockDetails(stock.Id)">
                             <img src="@($"data:{stock.ImageType};base64,{Convert.ToBase64String(stock.ImageData)}")" alt="Stock Image" class="stock-image" />
@@ -27,24 +27,64 @@
                     <p>No stocks in the database.</p>
                 }
             </div>
+            <div class="pagination d-flex justify-content-end">
+                <!-- justify-content-end för att placera till höger -->
+                @if (currentPage > 1)
+                {
+                    <button class="btn btn-primary me-2" @onclick="PreviousPage">Previous</button> <!-- me-2 för att lägga till marginal till höger -->
+                }
+                @if (currentPage < totalPages)
+                {
+                    <button class="btn btn-primary" @onclick="NextPage">Next</button>
+                }
+            </div>
         </div>
     </div>
 </div>
 
-
 @code {
     private List<Stock> allStocks = new List<Stock>();
+    private List<Stock> currentStocks = new List<Stock>();
+    private int itemsPerPage = 9;
+    private int currentPage = 1;
+    private int totalPages;
 
     protected override void OnInitialized()
     {
         allStocks = stockServices.GetAllStocks();
+        totalPages = (int)Math.Ceiling((double)allStocks.Count / itemsPerPage);
+        UpdateCurrentStocks();
+    }
+
+    private void UpdateCurrentStocks()
+    {
+        int startIndex = (currentPage - 1) * itemsPerPage;
+        int endIndex = Math.Min(startIndex + itemsPerPage, allStocks.Count);
+        currentStocks = allStocks.GetRange(startIndex, endIndex - startIndex);
     }
 
     private void ShowStockDetails(int stockId)
-    {     
+    {
         Navigation.NavigateTo($"/stockdetails/{stockId}");
     }
 
+    private void PreviousPage()
+    {
+        if (currentPage > 1)
+        {
+            currentPage--;
+            UpdateCurrentStocks();
+        }
+    }
+
+    private void NextPage()
+    {
+        if (currentPage < totalPages)
+        {
+            currentPage++;
+            UpdateCurrentStocks();
+        }
+    }
 }
 
 <style>
@@ -84,4 +124,8 @@
         .stock-details h5 {
             margin-bottom: 8px;
         }
+
+    .pagination {
+        margin-top: 20px;
+    }
 </style>

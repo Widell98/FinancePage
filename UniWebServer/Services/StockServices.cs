@@ -42,7 +42,7 @@ namespace UniWeb.Services
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
-                return context.Stocks.FirstOrDefault(s => s.Id == stockId);
+                return context.Stocks.First(s => s.Id == stockId);
             }
         }
 

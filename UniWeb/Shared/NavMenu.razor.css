@@ -1,26 +1,30 @@
+/* Navbar toggle button */
 .navbar-toggler {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+/* Top row styling */
 .top-row {
     height: 3.5rem;
-    background-color: rgba(0,0,0,0.4);
+    background-color: white;
 }
 
+/* Navbar brand styling */
 .navbar-brand {
     font-size: 1.1rem;
 }
 
+/* Icon styling */
 .oi {
     width: 2rem;
     font-size: 1.1rem;
-    vertical-align: text-top;
-    top: -2px;
+    vertical-align: middle; /* Adjust vertical alignment */
 }
 
+/* Nav item styling */
 .nav-item {
     font-size: 0.9rem;
-    padding-bottom: 0.5rem;
+    padding: 0.5rem 0; /* Adjust padding */
 }
 
     .nav-item:first-of-type {
@@ -31,38 +35,41 @@
         padding-bottom: 1rem;
     }
 
-    .nav-item ::deep a {
+    /* Nav link styling */
+    .nav-item a {
         color: #d7d7d7;
         border-radius: 4px;
         height: 3rem;
         display: flex;
         align-items: center;
         line-height: 3rem;
+        text-decoration: none; /* Remove underline */
     }
 
-.nav-item ::deep a.active {
-    background-color: rgba(255,255,255,0.25);
-    color: white;
-}
+        /* Active nav link styling */
+        .nav-item a.active {
+            background-color: rgba(255, 255, 255, 0.25);
+            color: white;
+        }
 
-.nav-item ::deep a:hover {
-    background-color: rgba(255,255,255,0.1);
-    color: white;
-}
+        /* Hover nav link styling */
+        .nav-item a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
 
+/* Media query for wide screens */
 @media (min-width: 641px) {
     .navbar-toggler {
-        display: none;
+        display: none; /* Hide toggler for wider screens */
     }
 
     .collapse {
-        /* Never collapse the sidebar for wide screens */
-        display: block;
+        display: block; /* Never collapse the sidebar for wide screens */
     }
-    
+
     .nav-scrollable {
-        /* Allow sidebar to scroll for tall menus */
-        height: calc(100vh - 3.5rem);
+        height: calc(100vh - 3.5rem); /* Allow sidebar to scroll for tall menus */
         overflow-y: auto;
     }
 }
