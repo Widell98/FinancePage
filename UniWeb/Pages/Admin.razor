@@ -55,6 +55,15 @@
                     <InputText class="form-control" id="Description" @bind-Value="stock.Description"></InputText>
                 </div>
                 <div class="form-group">
+                    <label for="SectorInput">Stock Sector</label>
+                    <select class="form-control" id="SectorInput" @bind="@stock.sector">
+                        @foreach (Sector sector in Enum.GetValues(typeof(Sector)))
+                        {
+                            <option value="@sector">@sector</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
                     <label for="ImageInput">Stock Image</label>
                     <InputFile class="form-control-file" id="ImageInput" OnChange="HandleFileChange" />
                 </div>
