@@ -9,10 +9,10 @@
 {
     <h5> $ @selectedStock.Name</h5>
     <p> @selectedStock.Description</p>
-    <img src="@($"data:{selectedStock.ImageType};base64,{Convert.ToBase64String(selectedStock.ImageData)}")" 
-    alt="Stock Image"
-         style="max-height: 1024px; max-width: 1366px;"
-    class="img-fluid" />
+    <img src="@($"data:{selectedStock.AnalysisImageType};base64,{Convert.ToBase64String(selectedStock.AnalysisImageData)}")"
+    alt="Stock Image" 
+    class="stock-image" 
+    style="max-height:1024; max-width:1360px;" />
 }
 
 
@@ -24,9 +24,6 @@
 
     protected override void OnInitialized()
     {
-        // Hämta information om den valda aktien från din databas eller lagring
-        // Använd StockId för att filtrera efter den valda aktien
-        // Exempelvis, du kan använda stockServices för att hämta informationen
         selectedStock = stockServices.GetStockById(int.Parse(StockId));
     }
 }

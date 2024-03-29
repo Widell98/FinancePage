@@ -35,7 +35,7 @@
                     @foreach (var stock in currentStocks)
                     {
                         <div class="stock-card" @onclick="() => ShowStockDetails(stock.Id)">
-                            <img src="@($"data:{stock.ImageType};base64,{Convert.ToBase64String(stock.ImageData)}")" alt="Stock Image" class="stock-image" />
+                            <img src="@($"data:{stock.LogoImageType};base64,{Convert.ToBase64String(stock.LogoImageData)}")" alt="Stock Image" class="stock-image" />
                             <div class="stock-details">
                                 <h5 class="stock-title">@((stock.Name != null) ? stock.Name : "-")</h5>
                             </div>
@@ -65,7 +65,7 @@
 @code {
     private List<Stock> allStocks = new List<Stock>();
     private List<Stock> currentStocks = new List<Stock>();
-    private int itemsPerPage = 9;
+    private int itemsPerPage = 12;
     private int currentPage = 1;
     private int totalPages;
 
@@ -127,8 +127,8 @@
     }
 
     .stock-card {
-        flex: 0 0 calc(33.33% - 16px); /* Anpassa efter önskad kolumnbredd */
-        max-width: calc(33.33% - 16px); /* Anpassa efter önskad kolumnbredd */
+        flex: 0 0 calc(25% - 16px); /* Anpassa efter önskad kolumnbredd */
+        max-width: calc(25% - 16px); /* Anpassa efter önskad kolumnbredd */
         box-sizing: border-box;
         position: relative;
         overflow: hidden;

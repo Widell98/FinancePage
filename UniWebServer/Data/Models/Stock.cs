@@ -28,17 +28,20 @@ namespace UniWeb.Data.Models
         public string? Name { get; set; }
 
         public string? Description { get; set; }     
-        
-        public int Price { get; set; }
-
+      
         public DateTime DateTime { get; set; }
 
-        public byte[]? ImageData { get; set; }
-
-        public string? ImageType { get; set; }
-
         [EnumDataType(typeof(Sector))]
+
         public Sector sector { get; set; }
+
+        public byte[]? LogoImageData { get; set; }
+
+        public string? LogoImageType { get; set; }
+
+        public byte[]? AnalysisImageData { get; set; } 
+
+        public string? AnalysisImageType { get; set; }
 
     }
 }

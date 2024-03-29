@@ -7,6 +7,7 @@
 @inject StockServices stockServices
 @inject Microsoft.JSInterop.IJSRuntime JSRuntime
 
+
 <div class="container mt-5">
     <div class="container mt-5">
         <div class="row mt-5">
@@ -24,7 +25,6 @@
                                     <div>
                                         <button class="btn btn-primary btn-sm" @onclick="() => OpenEditModal(stock)">Edit</button>
                                         <button class="btn btn-danger btn-sm" @onclick="() => ConfirmDelete(stock.Id)">Delete</button>
-
                                     </div>
                                 </li>
                                 <hr />
@@ -64,9 +64,14 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="ImageInput">Stock Image</label>
-                    <InputFile class="form-control-file" id="ImageInput" OnChange="HandleFileChange" />
+                <label for="ImageInput">Stock Logo</label>
+                    <InputFile class="form-control-file" id="LogoImageInput" OnChange="HandleFileChangeForLogo" />
                 </div>
+
+                 <div class="form-group">
+                    <label for="ImageInput">Stock Analysis</label>
+                    <InputFile class="form-control-file" id="AnalysisImageInput" OnChange="HandleFileChangeForAnalysis" />
+                </div> 
                 <button type="submit" class="btn btn-primary">Add Stock</button>
             </EditForm>
 
@@ -188,7 +193,7 @@
         allStocks = stockServices.GetAllStocks();
     }
 
-    private async Task HandleFileChange(InputFileChangeEventArgs e)
+    private async Task HandleFileChangeForLogo(InputFileChangeEventArgs e)
     {
         // Hantera filändringen här
         // e.File kommer att innehålla information om den uppladdade filen
@@ -198,12 +203,24 @@
             using (var memoryStream = new MemoryStream())
             {
                 await stream.CopyToAsync(memoryStream);
-                stock.ImageData = memoryStream.ToArray();
+                stock.LogoImageData = memoryStream.ToArray();
             }
         }
+    }
 
-        // Sätt MIME-typen baserat på filändelse (kan vara mer robust i produktion)
-        stock.ImageType = e.File.ContentType;
+    private async Task HandleFileChangeForAnalysis(InputFileChangeEventArgs e)
+    {
+        // Hantera filändringen här
+        // e.File kommer att innehålla information om den uppladdade filen
+        // Konvertera den till byte-array och lagra i din modell (stock)
+        using (var stream = e.File.OpenReadStream())
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                await stream.CopyToAsync(memoryStream);
+                stock.AnalysisImageData = memoryStream.ToArray();
+            }
+        }
     }
 
     private void CloseEditModal()
@@ -221,8 +238,6 @@
             DeleteStock(stockId);
         }
     }
-
-
 
     private void DeleteStock(int stockId)
     {
