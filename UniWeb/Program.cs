@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using UniWeb.Data;
 using UniWeb.Services;
+using UniWebServer.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("Default");
@@ -9,6 +10,8 @@ var connectionString = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddTransient<StockServices>();
+builder.Services.AddTransient<SuiService>();
+builder.Services.AddHttpClient<SuiService>();
 
 
 builder.Services.AddDbContextFactory<AppDbContext>((DbContextOptionsBuilder options) =>

@@ -1,4 +1,4 @@
-﻿@page "/stockdetails/{stockId}"
+﻿@page "/stockdetails/{StockId}"
 @using UniWeb.Data.Models;
 @using UniWeb.Services
 @inject StockServices stockServices
@@ -7,24 +7,52 @@
 
 @if (selectedStock != null)
 {
-    <h5> $ @selectedStock.Name</h5>
-    <p> @selectedStock.Description</p>
-    <img src="@($"data:{selectedStock.AnalysisImageType};base64,{Convert.ToBase64String(selectedStock.AnalysisImageData)}")"
-    alt="Stock Image" 
-    class="stock-image" 
-    style="max-height:1024; max-width:1360px;" />
-}
+    <div class="detail-container">
+        <h2 class="detail-title">$ @selectedStock.Name</h2>
+        <p class="detail-description">@selectedStock.Description</p>
 
+        <!-- Bilden med onclick-event -->
+        <img src="@($"data:{selectedStock.AnalysisImageType};base64,{Convert.ToBase64String(selectedStock.AnalysisImageData)}")"
+             alt="Stock Image"
+             class="detail-image"
+             @onclick="OpenModal" />
+
+        <!-- Modal för att visa bilden större -->
+        @if (isModalOpen)
+        {
+            <div class="modal-overlay active" @onclick="CloseModal">
+                <button class="close-button" @onclick="CloseModal">×</button>
+                <img src="@($"data:{selectedStock.AnalysisImageType};base64,{Convert.ToBase64String(selectedStock.AnalysisImageData)}")"
+                     alt="Stock Image"
+                     class="modal-image" />
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>Ingen aktie vald.</p>
+}
 
 @code {
     [Parameter]
     public string StockId { get; set; }
 
     private Stock selectedStock;
+    private bool isModalOpen = false;
 
     protected override void OnInitialized()
     {
         selectedStock = stockServices.GetStockById(int.Parse(StockId));
     }
-}
 
+    private void OpenModal()
+    {
+        isModalOpen = true;
+    }
+
+    private void CloseModal()
+    {
+        isModalOpen = false;
+    }
+}

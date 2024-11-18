@@ -1,0 +1,31 @@
+﻿@page "/Blog"
+@using UniWebServer.Services;
+@inject SuiService SuiService
+
+<h3>SUI Blockchain Integration</h3>
+
+<div>
+    <p>Balance: @balance</p>
+    <button @onclick="GetBalance">Get Balance</button>
+</div>
+
+<div>
+    <input @bind="transactionAmount" placeholder="Amount" />
+    <button @onclick="SendTransaction">Send Transaction</button>
+</div>
+
+@code {
+    private decimal balance;
+    private decimal transactionAmount;
+
+    private async Task GetBalance()
+    {
+        balance = await SuiService.GetBalanceAsync("your-wallet-address");
+    }
+
+    private async Task SendTransaction()
+    {
+        var transactionId = await SuiService.SendTransactionAsync("from-address", "to-address", transactionAmount);
+        Console.WriteLine($"Transaction ID: {transactionId}");
+    }
+}
