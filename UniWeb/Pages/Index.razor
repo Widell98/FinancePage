@@ -41,9 +41,9 @@
                     {
                         <div class="stock-card" @onclick="() => ShowStockDetails(stock.Id)">
                             <img src="@($"data:{stock.LogoImageType};base64,{Convert.ToBase64String(stock.LogoImageData)}")" alt="Stock Image" class="stock-image" />
-                           <div class="stock-details">
+                         @*   <div class="stock-details">
                                 <p class="stock-title">@((stock.Name != null) ? stock.Name : "-")</p>
-                            </div>
+                            </div> *@
                         </div>
                     }
                 }
