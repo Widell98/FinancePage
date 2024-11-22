@@ -2,20 +2,27 @@
 @using UniWeb.Data.Models;
 @using UniWeb.Services
 @inject StockServices stockServices
+@inject NavigationManager Navigation
 
-<PageTitle> Stock Details </PageTitle>
+<PageTitle>Stock Details</PageTitle>
 
-@if (selectedStock != null)
-{
-    <div class="detail-container">
-        <h2 class="detail-title">$ @selectedStock.Name</h2>
+<div class="detail-container">
+    <!-- Tillbaka-knappen -->
+    <button class="back-button" @onclick="GoBackToHome">⬅ Tillbaka</button>
+
+    @if (selectedStock != null)
+    {
+        <h2 class="detail-title">@selectedStock.Name</h2>
         <p class="detail-description">@selectedStock.Description</p>
 
         <!-- Bilden med onclick-event -->
-        <img src="@($"data:{selectedStock.AnalysisImageType};base64,{Convert.ToBase64String(selectedStock.AnalysisImageData)}")"
-             alt="Stock Image"
-             class="detail-image"
-             @onclick="OpenModal" />
+        <div class="detail-image-container">
+            <img src="@($"data:{selectedStock.AnalysisImageType};base64,{Convert.ToBase64String(selectedStock.AnalysisImageData)}")"
+                 alt="Stock Analysis"
+                 class="detail-image"
+                 @onclick="OpenModal" />
+            <p class="click-to-enlarge">(Click to enlarge)</p>
+        </div>
 
         <!-- Modal för att visa bilden större -->
         @if (isModalOpen)
@@ -23,16 +30,16 @@
             <div class="modal-overlay active" @onclick="CloseModal">
                 <button class="close-button" @onclick="CloseModal">×</button>
                 <img src="@($"data:{selectedStock.AnalysisImageType};base64,{Convert.ToBase64String(selectedStock.AnalysisImageData)}")"
-                     alt="Stock Image"
+                     alt="Stock Analysis"
                      class="modal-image" />
             </div>
         }
-    </div>
-}
-else
-{
-    <p>Ingen aktie vald.</p>
-}
+    }
+    else
+    {
+        <p>No stock selected.</p>
+    }
+</div>
 
 @code {
     [Parameter]
@@ -54,5 +61,10 @@ else
     private void CloseModal()
     {
         isModalOpen = false;
+    }
+
+    private void GoBackToHome()
+    {
+        Navigation.NavigateTo("/");
     }
 }

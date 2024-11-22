@@ -6,64 +6,41 @@
 
 <PageTitle>Watchlist</PageTitle>
 
-<div class="container mt-3"> 
-    <h1 > WatchList</h1>
- 
+<div class="container mt-3">
+    <h1>WatchList</h1>
 </div>
-@*sektion*@
-@* <div class="container mt-3">
-    <div class="row">
-        <div class="col">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <button class="btn btn-primary mx-2" @onclick="() => FilterStocksBySector(Sector.Tech)">Tech</button>
-                    <button class="btn btn-primary mx-2" @onclick="() => FilterStocksBySector(Sector.Investment)">Investment</button>
-                    <button class="btn btn-primary mx-2" @onclick="() => FilterStocksBySector(Sector.Bank)">Bank</button>
-                    <button class="btn btn-primary mx-2" @onclick="() => FilterStocksBySector(Sector.Healthcare)">Healthcare</button>
-                    <button class="btn btn-primary mx-2" @onclick="() => FilterStocksBySector(Sector.Energy)">Energy</button>
-                    <button class="btn btn-primary mx-2" @onclick="() => FilterStocksBySector(Sector.ConsumerGoods)">ConsumerGoods</button>
-                    <button class="btn btn-primary mx-2" @onclick="() => FilterStocksBySector(Sector.Index)">Index</button>
-                    <!-- Lägg till fler knappar för andra sektorer efter behov -->
-                    <button class="btn btn-primary mx-2" @onclick="ClearFilter">Clear</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> *@
 
 <div class="container mt-5">
-    <div class="row mt-5">
-        <div class="col-md-12">
-            <div class="stock-list">
-                @if (currentStocks.Any())
-                {
-                    @foreach (var stock in currentStocks)
-                    {
-                        <div class="stock-card" @onclick="() => ShowStockDetails(stock.Id)">
-                            <img src="@($"data:{stock.LogoImageType};base64,{Convert.ToBase64String(stock.LogoImageData)}")" alt="Stock Image" class="stock-image" />
-                         @*   <div class="stock-details">
-                                <p class="stock-title">@((stock.Name != null) ? stock.Name : "-")</p>
-                            </div> *@
-                        </div>
-                    }
-                }
-                else
-                {
-                    <p>No stocks in the database.</p>
-                }
-            </div>
-            <div class="pagination d-flex justify-content-end">
-                <!-- justify-content-end för att placera till höger -->
-                @if (currentPage > 1)
-                {
-                    <button class="btn btn-primary me-2" @onclick="PreviousPage">Previous</button> <!-- me-2 för att lägga till marginal till höger -->
-                }
-                @if (currentPage < totalPages)
-                {
-                    <button class="btn btn-primary" @onclick="NextPage">Next</button>
-                }
-            </div>
-        </div>
+    <div class="stock-container">
+        @if (currentStocks.Any())
+        {
+            @foreach (var stock in currentStocks)
+            {
+                <div class="stock-card" @onclick="() => ShowStockDetails(stock.Id)">
+                    <img src="@($"data:{stock.LogoImageType};base64,{Convert.ToBase64String(stock.LogoImageData)}")"
+                         alt="Stock Image" class="stock-image" />
+                    <div class="stock-card-content">
+                        <h3 class="stock-card-title">@((stock.Name != null) ? stock.Name : "-")</h3>
+                        <p class="stock-card-description">Sector: @stock.sector</p>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No stocks in the database.</p>
+        }
+    </div>
+
+    <div class="pagination d-flex justify-content-end mt-3">
+        @if (currentPage > 1)
+        {
+            <button class="btn btn-primary me-2" @onclick="PreviousPage">Previous</button>
+        }
+        @if (currentPage < totalPages)
+        {
+            <button class="btn btn-primary" @onclick="NextPage">Next</button>
+        }
     </div>
 </div>
 
