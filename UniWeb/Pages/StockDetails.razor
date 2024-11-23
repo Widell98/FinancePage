@@ -17,10 +17,17 @@
 
         <!-- Bilden med onclick-event -->
         <div class="detail-image-container">
-            <img src="@($"data:{selectedStock.AnalysisImageType};base64,{Convert.ToBase64String(selectedStock.AnalysisImageData)}")"
-                 alt="Stock Analysis"
-                 class="detail-image"
-                 @onclick="OpenModal" />
+            @if (selectedStock.AnalysisImageData != null)
+            {
+                <img src="@($"data:{selectedStock.AnalysisImageType};base64,{Convert.ToBase64String(selectedStock.AnalysisImageData)}")"
+                     alt="Stock Analysis"
+                     class="detail-image"
+                     @onclick="OpenModal" />
+            }
+            else
+            {
+                <img src="default-image-path.jpg" alt="Default Stock Image" class="detail-image" />
+            }
             <p class="click-to-enlarge">(Click to enlarge)</p>
         </div>
 
@@ -29,9 +36,16 @@
         {
             <div class="modal-overlay active" @onclick="CloseModal">
                 <button class="close-button" @onclick="CloseModal">×</button>
-                <img src="@($"data:{selectedStock.AnalysisImageType};base64,{Convert.ToBase64String(selectedStock.AnalysisImageData)}")"
-                     alt="Stock Analysis"
-                     class="modal-image" />
+                @if (selectedStock.AnalysisImageData != null)
+                {
+                    <img src="@($"data:{selectedStock.AnalysisImageType};base64,{Convert.ToBase64String(selectedStock.AnalysisImageData)}")"
+                         alt="Stock Analysis"
+                         class="modal-image" />
+                }
+                else
+                {
+                    <img src="default-image-path.jpg" alt="Default Stock Image" class="modal-image" />
+                }
             </div>
         }
     }
@@ -40,6 +54,7 @@
         <p>No stock selected.</p>
     }
 </div>
+
 
 @code {
     [Parameter]

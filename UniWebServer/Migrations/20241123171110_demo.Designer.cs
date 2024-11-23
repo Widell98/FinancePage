@@ -9,11 +9,11 @@ using UniWeb.Data;
 
 #nullable disable
 
-namespace UniWeb.Migrations
+namespace UniWebServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231228122508_nullable")]
-    partial class nullable
+    [Migration("20241123171110_demo")]
+    partial class demo
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,27 +33,62 @@ namespace UniWeb.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<byte[]>("AnalysisImageData")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("AnalysisImageType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("ImageData")
+                    b.Property<byte[]>("LogoImageData")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("ImageType")
+                    b.Property<string>("LogoImageType")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Price")
+                    b.Property<int>("sector")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.ToTable("Stocks");
+                });
+
+            modelBuilder.Entity("UniWebServer.Data.Models.Transaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StockSymbol")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Transactions");
                 });
 #pragma warning restore 612, 618
         }

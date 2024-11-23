@@ -17,8 +17,15 @@
             @foreach (var stock in currentStocks)
             {
                 <div class="stock-card" @onclick="() => ShowStockDetails(stock.Id)">
-                    <img src="@($"data:{stock.LogoImageType};base64,{Convert.ToBase64String(stock.LogoImageData)}")"
-                         alt="Stock Image" class="stock-image" />
+                    @if (stock.LogoImageData != null)
+                    {
+                        <img src="@($"data:{stock.LogoImageType};base64,{Convert.ToBase64String(stock.LogoImageData)}")"
+                             alt="Stock Image" class="stock-image" />
+                    }
+                    else
+                    {
+                        <img src="default-image-path.jpg" alt="Default Stock Image" class="stock-image" />
+                    }
                     <div class="stock-card-content">
                         <h3 class="stock-card-title">@((stock.Name != null) ? stock.Name : "-")</h3>
                         <p class="stock-card-description">Sector: @stock.sector</p>
@@ -31,6 +38,7 @@
             <p>No stocks in the database.</p>
         }
     </div>
+
 
     <div class="pagination d-flex justify-content-end mt-3">
         @if (currentPage > 1)
