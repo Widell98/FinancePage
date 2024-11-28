@@ -4,7 +4,10 @@
 @using UniWeb.Data.Models;
 @using UniWeb.Services;
 @using Microsoft.JSInterop;
+@using UniWebServer.Data.Models
+@using UniWebServer.Services
 @inject StockServices stockServices
+@inject BlogService blogServices
 @inject Microsoft.JSInterop.IJSRuntime JSRuntime
 
 
@@ -64,11 +67,11 @@
                     </select>
                 </div>
                 <div class="form-group">
-                <label for="ImageInput">Stock Logo</label>
+                    <label for="ImageInput">Stock Logo</label>
                     <InputFile class="form-control-file" id="LogoImageInput" OnChange="HandleFileChangeForLogo" />
                 </div>
 
-                 <div class="form-group">
+                <div class="form-group">
                     <label for="ImageInput">Stock Analysis</label>
                     <InputFile class="form-control-file" id="AnalysisImageInput" OnChange="HandleFileChangeForAnalysis" />
                 </div> 
@@ -133,6 +136,32 @@
             </div>
         </div>
     </div>
+
+    <div class="blog-admin-section">
+        <h3>Bloggposter</h3>
+
+        @if (blogPosts.Any())
+        {
+            <ul class="list-group">
+                @foreach (var post in blogPosts)
+                {
+                    <li class="list-group-item">
+                        <div>
+                            <p><strong>@post.Content</strong></p>
+                            <p class="text-muted">(@post.Date.ToString("yyyy-MM-dd HH:mm"))</p>
+                        </div>
+                        <button class="btn btn-danger btn-sm" @onclick="() => ConfirmDeletePost(post.Id)">Radera</button>
+                    </li>
+                    <hr />
+                }
+            </ul>
+        }
+        else
+        {
+            <p>Inga bloggposter har publicerats ännu.</p>
+        }
+    </div>
+
 </div>
 
 
@@ -250,6 +279,7 @@
     protected override void OnInitialized()
     {
         allStocks = stockServices.GetAllStocks();
+        blogPosts = blogServices.GetPosts();
     }
 
 
@@ -285,6 +315,23 @@
             // Spara hela API-svaret om du behöver det för andra ändamål
             apiResult = body;
         }
+    }
+
+    private List<BlogPost> blogPosts = new();
+
+    private async Task ConfirmDeletePost(int postId)
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Är du säker på att du vill radera detta inlägg?");
+        if (confirmed)
+        {
+            DeletePost(postId);
+        }
+    }
+
+    private void DeletePost(int postId)
+    {
+        blogServices.DeletePost(postId);
+        blogPosts = blogServices.GetPosts(); // Uppdatera listan
     }
 }
 

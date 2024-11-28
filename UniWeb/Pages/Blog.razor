@@ -1,31 +1,61 @@
-﻿@page "/Blog"
-@using UniWebServer.Services;
-@inject SuiService SuiService
+﻿@page "/blog"
+@using UniWeb.Data.Models
+@using UniWebServer.Data.Models
+@using UniWebServer.Services
+@inject BlogService blogService
 
-<h3>SUI Blockchain Integration</h3>
+<PageTitle>Blog</PageTitle>
 
-<div>
-    <p>Balance: @balance</p>
-    <button @onclick="GetBalance">Get Balance</button>
-</div>
+<div class="blog-container">
+    <h1 class="page-title">Tankar & Idéer</h1>
 
-<div>
-    <input @bind="transactionAmount" placeholder="Amount" />
-    <button @onclick="SendTransaction">Send Transaction</button>
+    <!-- Formulär för nytt inlägg -->
+    <div class="new-post-form">
+        <h2>Skriv ett nytt inlägg</h2>
+        <textarea class="new-post-text" @bind="newPostContent" placeholder="Dela dina tankar..."></textarea>
+        <button class="submit-button" @onclick="SubmitPost">Publicera</button>
+    </div>
+
+    <!-- Lista över befintliga inlägg -->
+    <div class="posts-list">
+        <h2>Senaste Inläggen</h2>
+        @if (posts != null && posts.Any())
+        {
+            @foreach (var post in posts)
+            {
+                <div class="post">
+                    <p class="post-content">@post.Content</p>
+                    <p class="post-date">@post.Date.ToString("yyyy-MM-dd HH:mm")</p>
+                </div>
+            }
+        }
+        else
+        {
+            <p>Inga inlägg har publicerats än.</p>
+        }
+    </div>
 </div>
 
 @code {
-    private decimal balance;
-    private decimal transactionAmount;
+    private string newPostContent;
+    private List<BlogPost> posts;
 
-    private async Task GetBalance()
+    protected override void OnInitialized()
     {
-        balance = await SuiService.GetBalanceAsync("your-wallet-address");
+        posts = blogService.GetPosts();
     }
 
-    private async Task SendTransaction()
+    private void SubmitPost()
     {
-        var transactionId = await SuiService.SendTransactionAsync("from-address", "to-address", transactionAmount);
-        Console.WriteLine($"Transaction ID: {transactionId}");
+        if (!string.IsNullOrWhiteSpace(newPostContent))
+        {
+            blogService.AddPost(new BlogPost
+                {
+                    Content = newPostContent,
+                    Date = DateTime.Now
+                });
+            newPostContent = string.Empty;
+            posts = blogService.GetPosts();
+        }
     }
 }
