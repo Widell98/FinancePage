@@ -79,9 +79,26 @@ namespace UniWeb.Services
                         existingStock.Description = editedStock.Description;
                     }
 
+                    if (editedStock.AnalysisImageData != null)
+                    {
+                        existingStock.AnalysisImageData = editedStock.AnalysisImageData;
+                    }
+
                     context.SaveChanges();
                 }
             }
         }
+
+        public void UpdateAnalysisImage(int stockId, byte[] analysisImageData)
+        {
+            var _dbContext = _dbContextFactory.CreateDbContext();
+            var stock = _dbContext.Stocks.FirstOrDefault(s => s.Id == stockId);
+            if (stock != null)
+            {
+                stock.AnalysisImageData = analysisImageData;
+                _dbContext.SaveChanges();
+            }
+        }
+
     }
 }

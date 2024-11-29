@@ -74,7 +74,7 @@
                 <div class="form-group">
                     <label for="ImageInput">Stock Analysis</label>
                     <InputFile class="form-control-file" id="AnalysisImageInput" OnChange="HandleFileChangeForAnalysis" />
-                </div> 
+                </div>
                 <button type="submit" class="btn btn-primary">Add Stock</button>
             </EditForm>
 
@@ -127,8 +127,23 @@
                                 <label for="EditStockDescription">Description</label>
                                 <InputText id="EditStockDescription" @bind-Value="@editStock.Description"></InputText>
                             </div>
-
-
+                            <div class="form-group">
+                                <label>Current Analysis Image</label>
+                                <div>
+                                    @if (editStock.AnalysisImageData != null)
+                                    {
+                                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(editStock.AnalysisImageData)" alt="Analysis Image" style="max-width: 100%; max-height: 200px;" />
+                                    }
+                                    else
+                                    {
+                                        <p>No analysis image available.</p>
+                                    }
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="EditAnalysisImage">Change Analysis Image</label>
+                                <InputFile id="EditAnalysisImage" OnChange="HandleFileChangeForEditAnalysis" />
+                            </div>
                             <button type="submit" class="btn btn-primary">Save Changes</button>
                         </form>
                     </div>
@@ -201,6 +216,14 @@
         }
     }
 
+    private async Task HandleFileChangeForEditAnalysis(InputFileChangeEventArgs e)
+    {
+        using var stream = e.File.OpenReadStream();
+        using var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream);
+        editStock.AnalysisImageData = memoryStream.ToArray();
+    }
+
 
     private void OpenEditModal(Stock stock)
     {
@@ -208,19 +231,30 @@
             {
                 Id = stock.Id,
                 Name = stock.Name,
-                Description = stock.Description
+                Description = stock.Description,
+                AnalysisImageType = stock.AnalysisImageType,
                 // Lägg till fler egenskaper om det behövs för redigering
             };
         EditModalOpen = true;
     }
-    private void HandleEditSubmit()
+
+    private async Task HandleEditSubmit()
     {
+        // Kolla om en ny analysbild har laddats upp
+        if (editStock.AnalysisImageData != null && editStock.AnalysisImageData.Length > 0)
+        {
+            stockServices.UpdateAnalysisImage(editStock.Id, editStock.AnalysisImageData);
+        }
+
         stockServices.EditStock(editStock.Id, editStock);
+
         // Återställ formuläret efter inlämning
         CloseEditModal();
+
         // Uppdatera listan med aktier
         allStocks = stockServices.GetAllStocks();
     }
+
 
     private async Task HandleFileChangeForLogo(InputFileChangeEventArgs e)
     {
