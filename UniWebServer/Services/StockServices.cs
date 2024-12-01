@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UniWeb.Data;
 using UniWeb.Data.Models;
+using UniWebServer.Data.Models;
 
 namespace UniWeb.Services
 {
@@ -13,24 +14,22 @@ namespace UniWeb.Services
             _dbContextFactory = dbContextFactory;
         }
 
-        public bool IsStockExists(string stockName)
+        public bool IsStockExists(string name)
         {
-            using (var context = _dbContextFactory.CreateDbContext())
-            {
-                return context.Stocks.Any(s => s.Name == stockName);
-            }
+            var _dbContext = _dbContextFactory.CreateDbContext();
+            return _dbContext.Stocks.Any(s => s.Name.ToLower() == name.ToLower());
         }
 
         public void AddStock(Stock stock)
         {
             using (var context = _dbContextFactory.CreateDbContext())
-            {                            
+            {
                 context.Add(stock);
-                context.SaveChanges();                                        
+                context.SaveChanges();
             }
         }
 
-        public List<Stock> GetAllStocks() 
+        public List<Stock> GetAllStocks()
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
@@ -100,5 +99,47 @@ namespace UniWeb.Services
             }
         }
 
+        public List<StockHistory> GetStockHistory(int stockId)
+        {
+            var _dbContext = _dbContextFactory.CreateDbContext();
+
+            return _dbContext.StockHistory
+                .Where(h => h.StockId == stockId)
+                .OrderByDescending(h => h.UploadDate)
+                .ToList();
+        }
+
+        public void AddStockHistory(int stockId, string analysisImagePath, string description)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                var history = new StockHistory
+                {
+                    StockId = stockId,
+                    AnalysisImagePath = analysisImagePath,
+                    Description = description
+                };
+                context.StockHistory.Add(history);
+                context.SaveChanges();
+            }
+        }
+
+        public StockHistory GetStockHistoryById(int historyId)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                return context.StockHistory.FirstOrDefault(h => h.Id == historyId);
+            }
+        }
+
+
+        public Stock GetStockByName(string name)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                return context.Stocks.FirstOrDefault(s => s.Name.ToLower() == name.ToLower());
+            }
+        }
     }
 }
+

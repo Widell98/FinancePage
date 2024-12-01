@@ -1,70 +1,75 @@
-﻿@page "/stockdetails/{StockId}"
-@using UniWeb.Data.Models;
+﻿@page "/stockdetails/{id:int}"
+@using UniWeb.Data.Models
 @using UniWeb.Services
+@using UniWebServer.Data.Models
 @inject StockServices stockServices
-@inject NavigationManager Navigation
 
-<PageTitle>Stock Details</PageTitle>
+<h2>Detaljer för aktien</h2>
 
-<div class="detail-container">
-    <!-- Tillbaka-knappen -->
-    <button class="back-button" @onclick="GoBackToHome">⬅ Tillbaka</button>
-
-    @if (selectedStock != null)
-    {
-        <h2 class="detail-title">@selectedStock.Name</h2>
-        <p class="detail-description">@selectedStock.Description</p>
-
-        <!-- Bilden med onclick-event -->
-        <div class="detail-image-container">
-            <img src="@($"data:{selectedStock.AnalysisImageType};base64,{Convert.ToBase64String(selectedStock.AnalysisImageData)}")"
-                 alt="Stock Analysis"
-                 class="detail-image"
-                 @onclick="OpenModal" />
-            <p class="click-to-enlarge">(Click to enlarge)</p>
-        </div>
-
-        <!-- Modal för att visa bilden större -->
-        @if (isModalOpen)
+@if (stock != null)
+{
+    <div style="margin-bottom: 20px;">
+        <h3>@stock.Name</h3>
+        @if (stock.AnalysisImageData != null)
         {
-            <div class="modal-overlay active" @onclick="CloseModal">
-                <button class="close-button" @onclick="CloseModal">×</button>
-                <img src="@($"data:{selectedStock.AnalysisImageType};base64,{Convert.ToBase64String(selectedStock.AnalysisImageData)}")"
-                     alt="Stock Analysis"
-                     class="modal-image" />
-            </div>
+            <img src="data:@stock.AnalysisImageType;base64,@Convert.ToBase64String(stock.AnalysisImageData)" alt="Analysbild" style="width: 100%; max-height: 400px;" />
         }
-    }
-    else
-    {
-        <p>No stock selected.</p>
-    }
-</div>
+        <p>@stock.Description</p>
+    </div>
+}
+else
+{
+    <p>Laddar aktiedata...</p>
+}
+
+<h3>Historik</h3>
+@if (stockHistory != null && stockHistory.Any())
+{
+    <ul>
+        @foreach (var history in stockHistory)
+        {
+            <li>
+                <button @onclick="() => LoadAnalysis(history.Id)" class="btn btn-link">
+                    @history.UploadDate.ToString("yyyy-MM-dd"): @history.Description
+                </button>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>Ingen historik tillgänglig för denna aktie.</p>
+}
+
+@if (selectedHistory != null)
+{
+    <h4>Vald analys</h4>
+    <div style="margin-top: 20px;">
+        @if (!string.IsNullOrEmpty(selectedHistory.AnalysisImagePath))
+        {
+            <img src="@selectedHistory.AnalysisImagePath" alt="Vald analysbild" style="width: 100%; max-height: 400px;" />
+        }
+        <p>@selectedHistory.Description</p>
+        <p><strong>Datum:</strong> @selectedHistory.UploadDate.ToString("yyyy-MM-dd")</p>
+    </div>
+}
 
 @code {
-    [Parameter]
-    public string StockId { get; set; }
+    [Parameter] public int Id { get; set; }
+    private Stock stock;
+    private List<StockHistory> stockHistory = new();
+    private StockHistory selectedHistory;
 
-    private Stock selectedStock;
-    private bool isModalOpen = false;
-
-    protected override void OnInitialized()
+    /// Initierar sidan och hämtar data för aktien och dess historik
+    protected override async Task OnInitializedAsync()
     {
-        selectedStock = stockServices.GetStockById(int.Parse(StockId));
+        stock = stockServices.GetStockById(Id);
+        stockHistory = stockServices.GetStockHistory(Id);
     }
 
-    private void OpenModal()
+    /// Laddar en specifik analys från historiken
+    private void LoadAnalysis(int historyId)
     {
-        isModalOpen = true;
-    }
-
-    private void CloseModal()
-    {
-        isModalOpen = false;
-    }
-
-    private void GoBackToHome()
-    {
-        Navigation.NavigateTo("/");
+        selectedHistory = stockHistory.FirstOrDefault(h => h.Id == historyId);
     }
 }
