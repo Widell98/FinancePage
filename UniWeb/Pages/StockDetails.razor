@@ -4,7 +4,8 @@
 @using UniWebServer.Data.Models
 @inject StockServices stockServices
 
-<h2>Detaljer för aktien</h2>
+<h1>@stock.Name</h1>
+<p>@stock.Description</p>
 
 @if (stock != null)
 {
@@ -22,54 +23,63 @@ else
     <p>Laddar aktiedata...</p>
 }
 
+<!-- Historik -->
 <h3>Historik</h3>
-@if (stockHistory != null && stockHistory.Any())
-{
-    <ul>
-        @foreach (var history in stockHistory)
-        {
-            <li>
-                <button @onclick="() => LoadAnalysis(history.Id)" class="btn btn-link">
-                    @history.UploadDate.ToString("yyyy-MM-dd"): @history.Description
-                </button>
-            </li>
-        }
-    </ul>
-}
-else
-{
-    <p>Ingen historik tillgänglig för denna aktie.</p>
-}
+<ul class="history-list">
+    @foreach (var history in stockHistory)
+    {
+        <li @onclick="() => LoadAnalysis(history)">
+            <img src="@history.AnalysisImagePath" alt="Analysis" class="history-thumbnail" />
+            <p>@history.UploadDate.ToShortDateString()</p>
+        </li>
+    }
+</ul>
 
-@if (selectedHistory != null)
-{
-    <h4>Vald analys</h4>
-    <div style="margin-top: 20px;">
-        @if (!string.IsNullOrEmpty(selectedHistory.AnalysisImagePath))
-        {
-            <img src="@selectedHistory.AnalysisImagePath" alt="Vald analysbild" style="width: 100%; max-height: 400px;" />
-        }
-        <p>@selectedHistory.Description</p>
-        <p><strong>Datum:</strong> @selectedHistory.UploadDate.ToString("yyyy-MM-dd")</p>
-    </div>
-}
+<!-- Modal för att förstora bilden -->
+<Modal ImageSource="@ModalImageSource" IsBase64Image="@IsModalImageBase64" @ref="ImageModal" />
 
 @code {
-    [Parameter] public int Id { get; set; }
-    private Stock stock;
-    private List<StockHistory> stockHistory = new();
-    private StockHistory selectedHistory;
+    [Parameter] public int id { get; set; }
 
-    /// Initierar sidan och hämtar data för aktien och dess historik
+    private Stock stock = new Stock();
+    private List<StockHistory> stockHistory = new();
+    private Modal ImageModal;
+    private string? ModalImageSource;
+    private bool IsModalImageBase64;
+
     protected override async Task OnInitializedAsync()
     {
-        stock = stockServices.GetStockById(Id);
-        stockHistory = stockServices.GetStockHistory(Id);
+        // Hämta aktieinformation och historik
+        stock = stockServices.GetStockById(id);
+        stockHistory = stockServices.GetStockHistoryByStockId(id);
+
+
+        // Sätt modalbildens källa till huvudanalysen
+        if (stock.AnalysisImageData != null)
+        {
+            ModalImageSource = $"data:{stock.AnalysisImageType};base64,{Convert.ToBase64String(stock.AnalysisImageData)}";
+            IsModalImageBase64 = true;
+        }
+        else if (!string.IsNullOrEmpty(stock.AnalysisImageType))
+        {
+            ModalImageSource = stock.AnalysisImageType;
+            IsModalImageBase64 = false;
+        }
     }
 
-    /// Laddar en specifik analys från historiken
-    private void LoadAnalysis(int historyId)
+    private void OpenModal()
     {
-        selectedHistory = stockHistory.FirstOrDefault(h => h.Id == historyId);
+        // Visa modalen när användaren klickar på huvudbilden
+        ImageModal?.Show();
+    }
+
+    private void LoadAnalysis(StockHistory history)
+    {
+        // Uppdatera sidan med vald analys
+        stock.Description = history.Description;
+
+        // Använd analysens filväg för modalen
+        ModalImageSource = history.AnalysisImagePath;
+        IsModalImageBase64 = false;
     }
 }

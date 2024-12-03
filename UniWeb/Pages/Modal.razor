@@ -1,0 +1,32 @@
+﻿<div class="modal-backdrop" @onclick="CloseModal" style="@(IsVisible ? "display: block;" : "display: none;")">
+    <div class="modal-content">
+        @if (IsBase64Image)
+        {
+            <img src="@ImageSource" alt="Full Size Image" />
+        }
+        else
+        {
+            <img src="@ImageSource" alt="Full Size Image" />
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public string ImageSource { get; set; } = string.Empty;
+    [Parameter] public bool IsBase64Image { get; set; }
+    [Parameter] public EventCallback<bool> OnClose { get; set; }
+
+    public bool IsVisible { get; private set; }
+
+    public void Show()
+    {
+        IsVisible = true;
+        StateHasChanged();
+    }
+
+    public void CloseModal()
+    {
+        IsVisible = false;
+        OnClose.InvokeAsync(false);
+    }
+}

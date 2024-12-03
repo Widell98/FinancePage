@@ -124,14 +124,16 @@ namespace UniWeb.Services
             }
         }
 
-        public StockHistory GetStockHistoryById(int historyId)
+        public List<StockHistory> GetStockHistoryByStockId(int stockId)
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
-                return context.StockHistory.FirstOrDefault(h => h.Id == historyId);
+                return context.StockHistory
+                    .Where(h => h.StockId == stockId)
+                    .OrderByDescending(h => h.UploadDate)
+                    .ToList();
             }
         }
-
 
         public Stock GetStockByName(string name)
         {
