@@ -109,16 +109,19 @@ namespace UniWeb.Services
                 .ToList();
         }
 
-        public void AddStockHistory(int stockId, string analysisImagePath, string description)
+        public void AddStockHistory(int stockId, byte[] analysisImageData, string analysisImageType, string description)
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
                 var history = new StockHistory
                 {
                     StockId = stockId,
-                    AnalysisImagePath = analysisImagePath,
-                    Description = description
+                    AnalysisImageData = analysisImageData,
+                    AnalysisImageType = analysisImageType,
+                    Description = description,
+                    UploadDate = DateTime.Now // Lägg till uppladdningstid
                 };
+
                 context.StockHistory.Add(history);
                 context.SaveChanges();
             }
@@ -134,6 +137,18 @@ namespace UniWeb.Services
                     .ToList();
             }
         }
+
+        public StockHistory GetLatestStockHistory(int stockId)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                return context.StockHistory
+                    .Where(h => h.StockId == stockId)
+                    .OrderByDescending(h => h.UploadDate)
+                    .FirstOrDefault();
+            }
+        }
+
 
         public Stock GetStockByName(string name)
         {

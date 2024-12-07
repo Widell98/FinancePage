@@ -207,50 +207,48 @@ c
 
         try
         {
-            // Kontrollera om namnet är giltigt
             if (string.IsNullOrWhiteSpace(stock?.Name))
             {
-                showFailMessage = true; // Visa felmeddelande
+                showFailMessage = true;
                 failMessageText = "Namnet på aktien är obligatoriskt.";
                 return;
             }
 
-            // Kontrollera om aktien redan finns i databasen
             bool isStockExist = stockServices.IsStockExists(stock.Name);
 
             if (isStockExist)
             {
                 // Om aktien finns, lägg till ny analys i historiken
                 var existingStock = stockServices.GetStockByName(stock.Name);
-                stockServices.AddStockHistory(existingStock.Id, stock.AnalysisImageType, stock.Description);
+                stockServices.AddStockHistory(
+                    existingStock.Id,
+                    stock.AnalysisImageData,
+                    stock.AnalysisImageType,
+                    stock.Description
+                );
 
-                // Visa framgångsmeddelande
                 showSuccessMessage = true;
                 successMessageText = $"En ny analys har lagts till för aktien '{stock.Name}'.";
             }
             else
             {
-                // Lägg till aktien i databasen
                 stockServices.AddStock(stock);
 
-                // Visa framgångsmeddelande
                 showSuccessMessage = true;
                 successMessageText = $"Aktien '{stock.Name}' har lagts till med den första analysen.";
 
-                // Uppdatera listan
                 allStocks = stockServices.GetAllStocks();
             }
 
-            // Återställ formuläret
             stock = new Stock();
         }
         catch (Exception ex)
         {
-            // Hantera eventuella undantag och visa felmeddelande
             showFailMessage = true;
             failMessageText = $"Ett fel uppstod: {ex.Message}";
         }
     }
+
 
 
     private async Task HandleFileChangeForEditAnalysis(InputFileChangeEventArgs e)

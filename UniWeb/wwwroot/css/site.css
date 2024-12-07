@@ -407,3 +407,60 @@ a, .btn-link {
     max-height: 90%;
     border-radius: 8px;
 }
+
+.main-image {
+    width: 100%;
+    max-width: 600px;
+    max-height: 400px;
+    cursor: pointer;
+    object-fit: contain;
+}
+
+.history-thumbnail {
+    width: 100px;
+    height: auto;
+    margin: 5px;
+    cursor: pointer;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.btn {
+    margin-top: 10px;
+}
+
+
+
+/* Styling för historiklistan */
+.history-list {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+    .history-list li {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+    }
+
+/* Styling för knappen */
+.reset-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+    .reset-button:hover {
+        background-color: #0056b3;
+    }

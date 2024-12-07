@@ -2,40 +2,53 @@
 @using UniWeb.Data.Models
 @using UniWeb.Services
 @using UniWebServer.Data.Models
+@using UniWebServer.Services
 @inject StockServices stockServices
 
-<h1>@stock.Name</h1>
-<p>@stock.Description</p>
+<h1>@stock?.Name</h1>
+<p>@stock?.Description</p>
 
-@if (stock != null)
+@if (stock.AnalysisImageData != null)
 {
     <div style="margin-bottom: 20px;">
-        <h3>@stock.Name</h3>
-        @if (stock.AnalysisImageData != null)
-        {
-            <img src="data:@stock.AnalysisImageType;base64,@Convert.ToBase64String(stock.AnalysisImageData)" alt="Analysbild" style="width: 100%; max-height: 400px;" />
-        }
-        <p>@stock.Description</p>
+        <img src="data:@stock.AnalysisImageType;base64,@Convert.ToBase64String(stock.AnalysisImageData)"
+             alt="Analysbild" style="width: 100%; max-height: 400px;"
+             @onclick="OpenModal" />
     </div>
 }
 else
 {
-    <p>Laddar aktiedata...</p>
+    <p>Ingen analysbild tillgänglig.</p>
 }
 
-<!-- Historik -->
 <h3>Historik</h3>
-<ul class="history-list">
-    @foreach (var history in stockHistory)
-    {
-        <li @onclick="() => LoadAnalysis(history)">
-            <img src="@history.AnalysisImagePath" alt="Analysis" class="history-thumbnail" />
-            <p>@history.UploadDate.ToShortDateString()</p>
-        </li>
-    }
-</ul>
+@if (stockHistory == null || !stockHistory.Any())
+{
+    <p>Ingen historik tillgänglig.</p>
+}
+else
+{
+    <ul class="history-list">
+        @foreach (var history in stockHistory)
+        {
+            <li @onclick="() => LoadAnalysis(history)" style="cursor: pointer;">
+                @if (history.AnalysisImageData != null)
+                {
+                    <img src="data:image/png;base64,@Convert.ToBase64String(history.AnalysisImageData)"
+                         alt="Analysis" class="history-thumbnail" />
+                }
+                <p>@history.UploadDate.ToShortDateString()</p>
+            </li>
+        }
+    </ul>
+}
 
-<!-- Modal för att förstora bilden -->
+@if (currentHistory != null)
+{
+    <button class="btn" @onclick="LoadLatestAnalysis">Till senaste analys</button>
+}
+
+<!-- Modal -->
 <Modal ImageSource="@ModalImageSource" IsBase64Image="@IsModalImageBase64" @ref="ImageModal" />
 
 @code {
@@ -43,43 +56,65 @@ else
 
     private Stock stock = new Stock();
     private List<StockHistory> stockHistory = new();
+    private StockHistory? currentHistory = null;
     private Modal ImageModal;
     private string? ModalImageSource;
     private bool IsModalImageBase64;
 
     protected override async Task OnInitializedAsync()
     {
-        // Hämta aktieinformation och historik
+        // Hämta historik och aktieinformation
         stock = stockServices.GetStockById(id);
-        stockHistory = stockServices.GetStockHistoryByStockId(id);
 
-
-        // Sätt modalbildens källa till huvudanalysen
-        if (stock.AnalysisImageData != null)
+        if (stock != null)
         {
-            ModalImageSource = $"data:{stock.AnalysisImageType};base64,{Convert.ToBase64String(stock.AnalysisImageData)}";
-            IsModalImageBase64 = true;
+            // Försök hämta historik
+            stockHistory = stockServices.GetStockHistoryByStockId(id);
+
+            // Ladda senaste analys om historik finns
+            if (stockHistory.Any())
+            {
+                LoadLatestAnalysis();
+            }
         }
-        else if (!string.IsNullOrEmpty(stock.AnalysisImageType))
+    }
+
+    private void LoadLatestAnalysis()
+    {
+        var latestHistory = stockServices.GetLatestStockHistory(id);
+
+        if (latestHistory != null)
         {
-            ModalImageSource = stock.AnalysisImageType;
-            IsModalImageBase64 = false;
+            currentHistory = null;
+            stock.AnalysisImageData = latestHistory.AnalysisImageData;
+            stock.AnalysisImageType = latestHistory.AnalysisImageType;
+            stock.Description = latestHistory.Description;
+
+            ModalImageSource = $"data:{latestHistory.AnalysisImageType};base64,{Convert.ToBase64String(latestHistory.AnalysisImageData)}";
+            IsModalImageBase64 = true;
+
+            StateHasChanged(); // Rendera om
+        }
+    }
+
+    private void LoadAnalysis(StockHistory history)
+    {
+        if (history.AnalysisImageData != null)
+        {
+            currentHistory = history;
+            stock.AnalysisImageData = history.AnalysisImageData;
+            stock.AnalysisImageType = history.AnalysisImageType;
+            stock.Description = history.Description;
+
+            ModalImageSource = $"data:{history.AnalysisImageType};base64,{Convert.ToBase64String(history.AnalysisImageData)}";
+            IsModalImageBase64 = true;
+
+            StateHasChanged(); // Rendera om
         }
     }
 
     private void OpenModal()
     {
-        // Visa modalen när användaren klickar på huvudbilden
         ImageModal?.Show();
-    }
-
-    private void LoadAnalysis(StockHistory history)
-    {
-        // Uppdatera sidan med vald analys
-        stock.Description = history.Description;
-
-        // Använd analysens filväg för modalen
-        ModalImageSource = history.AnalysisImagePath;
-        IsModalImageBase64 = false;
     }
 }
