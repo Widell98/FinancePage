@@ -1,38 +1,39 @@
-﻿  <div class="navbar-container">
+﻿<div class="navbar-container">
     <!-- Översta raden med logotyp och hamburgermeny -->
-    <div class="top-row navbar">
-        <div class="container-fluid">
+    <div class="top-row-navbar">
+        <div class="image-background">
             <a class="navbar-brand" href="">
-                <img src="favicon.png" alt="Logo" class="navbar-logo" /> <!-- Lägg till din logotyp här -->
+                <span>Breakout Boards</span>
             </a>
-            <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-                ☰
-            </button>
         </div>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            ☰
+        </button>
     </div>
+
 
     <!-- Navigationsmenyn -->
     <div class="@NavMenuCssClass nav-scrollable">
         <nav class="flex-column">
             <div class="nav-item">
                 <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span> Home
+                    Home
                 </NavLink>
             </div>
             <div class="nav-item">
                 <NavLink class="nav-link" href="Blog">
-                    <span class="oi oi-list-rich" aria-hidden="true"></span> Blog
+                    Blog
                 </NavLink>
             </div>
             <div class="nav-item">
                 <NavLink class="nav-link" href="Admin">
-                    <span class="oi oi-list-rich" aria-hidden="true"></span> Admin
+                    Admin
                 </NavLink>
             </div>
-            <!-- Lägg till fler länkar här om behövs -->
         </nav>
     </div>
 </div>
+
 
 @code {
     // Håller koll på om menyn är kollapsad

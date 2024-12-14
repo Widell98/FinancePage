@@ -1,4 +1,7 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
+
 
 /* Grundläggande inställningar */
 html, body {
@@ -28,37 +31,84 @@ a, .btn-link {
     }
 
 .navbar-container {
+    background-color: #2c2f33; /* Mörkgrå bakgrund */
+    color: #ffffff; /* Vit text */
+    font-family: "Arial", sans-serif;
     display: flex;
     flex-direction: column;
-    background-color: #23272a; /* Discord mörkare grå */
-    color: #ffffff;
-    width: 250px;
-    min-height: 100vh;
-    position: fixed;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+.top-row-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    color: aqua;
+}
+
+.navbar-brand span {
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: #ffffff; /* Matchar Discord-stilen */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.navbar-logo {
+    width: 40px; /* Anpassa storleken för att passa designen */
+    height: auto;
+    object-fit: contain;
+    margin-right: 10px;
+}
+
+.navbar-toggler {
+    background-color: #5865f2; /* Discord-lila färg */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .navbar-toggler:hover {
+        background-color: #4e5bbd; /* Mörkare lila vid hover */
+    }
 
 .nav-scrollable {
-    padding: 20px 15px;
+    background-color: #23272a; /* Ännu mörkare grå för sidopanelen */
+    display: none; /* Göm sidomenyn som standard */
+    flex-direction: column;
+    padding: 10px 0;
 }
 
-.nav-item {
-    margin-bottom: 10px;
-}
+    .nav-scrollable.nav-open {
+        display: flex; /* Visa när menyn är öppen */
+    }
 
 .nav-link {
+    color: #ffffff; /* Vit text */
     text-decoration: none;
-    color: #99aab5; /* Gråblå text för länkar */
-    font-size: 1.2rem;
-    padding: 10px 15px;
+    padding: 10px 20px;
     border-radius: 5px;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.3s ease;
 }
 
-    .nav-link:hover, .nav-link.active {
-        background-color: #7289da; /* Accentfärg */
-        color: #ffffff; /* Vit text vid aktiv/hover */
+    .nav-link:hover {
+        background-color: #5865f2; /* Lila bakgrund vid hover */
     }
+
+    .nav-link.active {
+        background-color: #5865f2; /* Markerad länk */
+    }
+
+.nav-item {
+    margin: 5px 0;
+}
+
 
 /* Kort för aktier */
 .stock-card {
@@ -430,6 +480,7 @@ img {
 
 .btn {
     margin-top: 10px;
+    color: aliceblue;
 }
 
 
