@@ -17,6 +17,8 @@ namespace UniWeb.Data
 
         public DbSet<StockHistory> StockHistory { get; set; }
 
+        public DbSet<BlogPost> Blog { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Stock>(entity =>
@@ -27,10 +29,13 @@ namespace UniWeb.Data
 
                 entity.HasIndex(e => e.Name)
                     .IsUnique(); // Säkerställer att namnet är unikt
-            });
 
+                modelBuilder.Entity<Transaction>()
+                .Property(t => t.Price)
+                .HasColumnType("decimal(18,2)");
+
+            });
             base.OnModelCreating(modelBuilder);
         }
-
     }
 }

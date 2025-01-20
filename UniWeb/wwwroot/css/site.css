@@ -14,10 +14,10 @@ html, body {
 
 h1 {
     font-size: 2.5rem;
-    color: #7289da; /* Discord blå */
+    /*color: #7289da;*/ /* Discord blå */
     text-align: center;
-    font-weight: bold;
     margin-bottom: 20px;
+    font-family: 'Poppins', sans-serif;
 }
 
 a, .btn-link {
@@ -95,6 +95,7 @@ a, .btn-link {
     padding: 10px 20px;
     border-radius: 5px;
     transition: background-color 0.3s ease;
+    font-family: 'Poppins', sans-serif;
 }
 
     .nav-link:hover {
@@ -115,6 +116,8 @@ a, .btn-link {
     position: relative;
     border-radius: 15px;
     overflow: hidden;
+    height: 300px; 
+    width: 250px;
     background: #23272a;
     color: #ffffff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -237,11 +240,13 @@ a, .btn-link {
     font-size: 1.2rem;
     color: #7289da; /* Blå färg liknande Discord */
     margin-bottom: 5px;
+    font-family: 'Poppins', sans-serif;
 }
 
 .stock-card-description {
     font-size: 0.9rem;
     color: #99aab5; /* Neutral gråaktig färg */
+    font-family: 'Poppins', sans-serif;
 }
 
 /* Grundläggande layout */
@@ -513,5 +518,99 @@ img {
 }
 
     .reset-button:hover {
+        background-color: #0056b3;
+    }
+
+/* Stil för analysbild */
+.analysis-image-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.analysis-image {
+    width: 100%;
+    max-width: 800px;
+    max-height: 800px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+/* Beskrivningstext */
+.stock-description {
+    font-size: 1.2em;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+/* Historiksektion */
+.history-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.history-item {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+    .history-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+.history-thumbnail {
+    width: 100%;
+    max-height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.history-info {
+    text-align: center;
+}
+
+.history-date {
+    font-size: 0.9em;
+    color: #555;
+}
+
+/* Ingen historik tillgänglig */
+.no-history {
+    font-size: 1.1em;
+    color: #888;
+    margin: 10px 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+.history-title {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Till senaste analys-knapp */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 20px;
+    transition: background-color 0.2s;
+}
+
+    .btn:hover {
         background-color: #0056b3;
     }
