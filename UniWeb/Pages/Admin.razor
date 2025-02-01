@@ -8,7 +8,6 @@
 @using UniWebServer.Services
 @inject StockServices stockServices
 @inject BlogService blogServices
-c
 @inject Microsoft.JSInterop.IJSRuntime JSRuntime
 
 
@@ -177,7 +176,6 @@ c
             <p>Inga bloggposter har publicerats ännu.</p>
         }
     </div>
-
 </div>
 
 
@@ -345,13 +343,14 @@ c
 
     private List<Stock> allStocks = new List<Stock>();
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
         allStocks = stockServices.GetAllStocks();
-        blogPosts = blogServices.GetPosts();
+        await blogServices.GetPostsAsync();
+
+        var blogPost = blogServices.GetPostsAsync();
+   
     }
-
-
     private async Task HandleSubmit()
     {
         var requestUri = $"https://yahoo-finance15.p.rapidapi.com/api/yahoo/qu/quote/{stockSymbol}/asset-profile";
@@ -388,24 +387,29 @@ c
 
     private List<BlogPost> blogPosts = new();
 
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBlogPosts();
+    }
+
+    private async Task LoadBlogPosts()
+    {
+        blogPosts = await blogServices.GetPostsAsync();
+    }
+
     private async Task ConfirmDeletePost(int postId)
     {
         var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Är du säker på att du vill radera detta inlägg?");
         if (confirmed)
         {
-            DeletePost(postId);
+            await DeletePost(postId);
         }
     }
 
-    private void DeletePost(int postId)
+    private async Task DeletePost(int postId)
     {
-        blogServices.DeletePost(postId);
-        blogPosts = blogServices.GetPosts(); // Uppdatera listan
-    }
-
-    private void GetStockHistory(int stockId)
-    {
-         stockServices.GetStockHistory(stockId);
+        await blogServices.DeletePostAsync(postId);
+        await LoadBlogPosts(); // Uppdatera listan efter radering
     }
 }
 

@@ -38,14 +38,14 @@
 
 @code {
     private string newPostContent;
-    private List<BlogPost> posts;
+    private List<BlogPost> posts = new();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        posts = blogService.GetPosts();
+        posts = await blogService.GetPostsAsync();
     }
 
-    private void SubmitPost()
+    private async Task SubmitPost()
     {
         if (!string.IsNullOrWhiteSpace(newPostContent))
         {
@@ -54,8 +54,10 @@
                     Content = newPostContent,
                     Date = DateTime.Now
                 });
+
             newPostContent = string.Empty;
-            posts = blogService.GetPosts();
+            posts = await blogService.GetPostsAsync(); // Uppdatera listan korrekt
         }
     }
 }
+
